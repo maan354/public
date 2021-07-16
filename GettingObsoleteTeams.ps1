@@ -1,7 +1,7 @@
-####
+#################
 # Microsoft 365 CLI script to get obsolute Teams
 # Created by Barry Bokdam
-#####
+###################
 
 
 #Variables
