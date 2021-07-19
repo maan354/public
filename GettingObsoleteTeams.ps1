@@ -19,9 +19,7 @@ $teams = $teams | ConvertFrom-Json
 
 #Getting SharePoint audit log
 Write-Host "Getting Auditlog for SharePoint"
-$AuditRecs = m365 tenant auditlog report --contentType "SharePoint" --output json
-$AuditRecs = $AuditRecs | ConvertFrom-Json
-
+$AuditRecs = m365 tenant auditlog report --contentType "SharePoint" --output json | ConvertFrom-Json
 
 #Get the information
 foreach ($team in $teams) {
