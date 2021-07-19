@@ -26,8 +26,7 @@ foreach ($team in $teams) {
     #Get the SharePoint URL
     Write-Host "Checking site " $team.displayName
     #Check of the SharePoint sites exist
-    $t = m365 teams team get --id $team.id --includeSiteUrl --output json
-    $t = $t | ConvertFrom-Json
+    $t = m365 teams team get --id $team.id --includeSiteUrl --output json | ConvertTo-Json
     $SPUrl = $t.siteUrl
     if ($null -eq $SPUrl)
         {
