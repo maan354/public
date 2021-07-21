@@ -10,7 +10,13 @@ $Today = (Get-Date)
 $ObsoleteGroups = 0
 
 #Connect to Microsoft 365
-m365 login
+$m365Status = m365 status
+
+if ($m365Status -eq "Logged Out") {
+  # Connection to Microsoft 365
+  m365 login
+}
+
 
 #Get all Microsoft Teams 
 Write-Host "Getting all Microsoft Teams"
