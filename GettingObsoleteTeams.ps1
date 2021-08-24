@@ -20,8 +20,7 @@ if ($m365Status -eq "Logged Out") {
 
 #Get all Microsoft Teams 
 Write-Host "Getting all Microsoft Teams"
-$teams = m365 teams team list --output json
-$teams = $teams | ConvertFrom-Json
+$teams = m365 teams team list --output json | ConvertFrom-Json
 
 #Getting SharePoint audit log
 Write-Host "Getting Auditlog for SharePoint"
@@ -33,15 +32,17 @@ foreach ($team in $teams) {
     Write-Host "Checking site " $team.displayName
     #Check of the SharePoint sites exist
     $t = m365 teams team get --id $team.id --includeSiteUrl --output json | ConvertTo-Json
+    Write-Host "Teamnaam is " $t.displayName -ForegroundColor Yellow
     $SPUrl = $t.siteUrl
+    Write-Host "SiteUrl is " $SPUrl
     if ($null -eq $SPUrl)
         {
         Write-Host "SharePoint has never been used for the group" $Team.DisplayName -ForegroundColor blue
         $ObsoleteGroups++   
         }
     #Check auditlog for SharePoint Activity 
-    $SPUrl = $SPUrl + "/*"
-    $AuditRec = $AuditRecs | Where-Object {$_.ObjectId -like $SPUrl}
+    $SPUrl = $SPUrl + "/"
+    $AuditRec = $AuditRecs | Where-Object {$_.siteUrl -like $SPUrl}
     If ($null -eq $AuditRec) 
     {
     Write-Host "No audit records found for" $team.displayName "-> It is potentially obsolete!" -ForegroundColor Green
