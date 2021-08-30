@@ -16,7 +16,9 @@ if ($m365Status -eq "Logged Out") {
   # Connection to Microsoft 365
   m365 login
 }
-
+#Get current user
+$m365 = m365 status --ouput json | ConvertFrom-Json
+$user = $m365.ConnectedAs
 
 #Get all Microsoft Teams 
 Write-Host "Getting all Microsoft Teams"
@@ -30,8 +32,12 @@ $AuditRecs = m365 tenant auditlog report --contentType "SharePoint" --output jso
 foreach ($team in $teams) {
     #Get the SharePoint URL
     Write-Host "Checking site " $team.displayName
-    #Check of the SharePoint sites exist
-    $t = m365 teams team get --id $team.id --includeSiteUrl --output json | ConvertTo-Json
+        
+    #Add user as onwer
+    m365 teams user add --teamId $team.id --userName $user --role Owner
+    
+    #Get info
+    $t = m365 teams team get --id $team.id --includeSiteUrl --output json | ConvertFrom-Json
     Write-Host "Teamnaam is " $t.displayName -ForegroundColor Yellow
     $SPUrl = $t.siteUrl
     Write-Host "SiteUrl is " $SPUrl
@@ -52,7 +58,8 @@ foreach ($team in $teams) {
         {
         Write-Host $AuditRec.Count "audit records found for " $team.displayname "the last is dated" $AuditRec.CreationTime[0] -ForegroundColor Yellow
     }
-
+    #Remove user from Microsoft Teams
+    m365 teams user remove --teamId $team.id -userName $user --confirm
 }
 
  
