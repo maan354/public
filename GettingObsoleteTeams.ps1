@@ -3,6 +3,12 @@
 # Created by Barry Bokdam
 ###################
 
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory=$true)]
+    [string]
+    $outputfile
+)
 
 #Variables
 $WarningDate = (Get-Date).AddDays(-90)
@@ -33,8 +39,8 @@ foreach ($team in $teams) {
     #Get the SharePoint URL
     Write-Host "Checking site " $team.displayName
         
-    #Add user as onwer
-    m365 teams user add --teamId $team.id --userName $user --role Owner
+    #Add user as owner
+    #m365 teams user add --teamId $team.id --userName $user --role Owner
     
     #Get info
     $t = m365 teams team get --id $team.id --includeSiteUrl --output json | ConvertFrom-Json
@@ -52,14 +58,17 @@ foreach ($team in $teams) {
     If ($null -eq $AuditRec) 
     {
     Write-Host "No audit records found for" $team.displayName "-> It is potentially obsolete!" -ForegroundColor Green
+    $output =  "No audit records found for" +  $team.displayName +  "-> It is potentially obsolete!"
     $ObsoleteGroups++   
     }
     Else 
         {
         Write-Host $AuditRec.Count "audit records found for " $team.displayname "the last is dated" $AuditRec.CreationTime[0] -ForegroundColor Yellow
+        $output = $AuditRec.Count + "audit records found for " + $team.displayname + "the last is dated" + $AuditRec.CreationTime[0]
     }
     #Remove user from Microsoft Teams
-    m365 teams user remove --teamId $team.id -userName $user --confirm
+    #m365 teams user remove --teamId $team.id -userName $user --confirm
+    $output | Out-File -FilePath $outputfile  -Append
 }
 
  
