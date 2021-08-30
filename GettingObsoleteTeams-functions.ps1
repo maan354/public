@@ -83,3 +83,14 @@ function Get-M365ObsoleteTeams {
 #---------------
 
 #Run the magic
+
+Try{
+    Get-M365status
+    Get-M365CurrentUser
+    Get-M365AllTeams
+    Get-M365AuditLog -contenttype SharePoint
+    Get-M365ObsoleteTeams
+}
+catch{
+    $_.Exception
+}
