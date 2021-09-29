@@ -36,13 +36,13 @@ $AuditRecs = m365 tenant auditlog report --contentType "SharePoint" --output jso
 
 #Get the information
 foreach ($team in $teams) {
-    #Get the SharePoint URL
-    Write-Host "Checking site " $team.displayName
+    
+        Write-Host "Checking site " $team.displayName
         
     #Add user as owner
     #m365 teams user add --teamId $team.id --userName $user --role Owner
     
-    #Get info
+    #Check SharePoint activity
     $t = m365 teams team get --id $team.id --includeSiteUrl --output json | ConvertFrom-Json
     Write-Host "Teamnaam is " $t.displayName -ForegroundColor Yellow
     $SPUrl = $t.siteUrl
@@ -66,9 +66,13 @@ foreach ($team in $teams) {
         Write-Host $AuditRec.Count "audit records found for " $team.displayname "the last is dated" $AuditRec.CreationTime[0] -ForegroundColor Yellow
         $output = $AuditRec.Count + "audit records found for " + $team.displayname + "the last is dated" + $AuditRec.CreationTime[0]
     }
+    
+    #Get Teams activity
+    $messages = m365 
+
     #Remove user from Microsoft Teams
     #m365 teams user remove --teamId $team.id -userName $user --confirm
-    $output | Out-File -FilePath $outputfile  -Append
 }
+
 
  
